@@ -6,7 +6,7 @@ module.exports.addToLikeMovies = async (requestAnimationFrame, res) => {
         const user = await User.findOne({ email});
         if (user) {
             const { likedMovies } = user;
-            const movieAlreadyLiked = likedMovies.find(({ id }) => (id = data.id));
+            const movieAlreadyLiked = likedMovies.find(({ id }) => (id === data.id));
             if(!movieAlreadyLiked) {
                 await User.findByIdAndUpdate(
                     user._id,
@@ -22,5 +22,18 @@ module.exports.addToLikeMovies = async (requestAnimationFrame, res) => {
 
     }catch (error){
         return res.json({msg: "Error adding movie"});
+    }
+};
+
+module.exports.getLikedMovies =  async(req,res) => {
+    try{
+        const { email} = req.body;
+        const user = await User.findOne({ email});
+        if(user) {
+            res.json({msg: "success", movies: user.likedMovies});
+        } else return res.json({msg: "User with given email not found. "});
+
+    }catch (err){
+        return res.json({ msg: "Error fetching movie"});
     }
 }
